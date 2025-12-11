@@ -1,0 +1,77 @@
+# -------------------------------
+# Python
+# -------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.dll
+*.dylib
+
+# -------------------------------
+# Virtual Environments
+# -------------------------------
+venv/
+backend/venv/
+frontend/venv/
+**/venv/
+.env
+
+# -------------------------------
+# OS Junk Files
+# -------------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------------
+# IDE Settings
+# -------------------------------
+.vscode/
+.idea/
+
+# -------------------------------
+# Streamlit Cache
+# -------------------------------
+.streamlit/
+frontend/.streamlit/
+**/.streamlit/
+
+# -------------------------------
+# FAISS / Vectorstores
+# (We keep vectorstore folder but ignore heavy index files)
+# -------------------------------
+backend/app/data/vectorstores/*/*.index
+backend/app/data/vectorstores/*/*.idx
+backend/app/data/vectorstores/*/index.faiss
+backend/app/data/vectorstores/*/index.bin
+
+# -------------------------------
+# Sentence-Transformers Cache
+# -------------------------------
+~/.cache/torch/
+~/.cache/huggingface/
+backend/.cache/
+**/.cache/
+
+# -------------------------------
+# Log files
+# -------------------------------
+*.log
+
+# -------------------------------
+# Jupyter / IPython
+# -------------------------------
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# -------------------------------
+# Build / Dist
+# -------------------------------
+build/
+dist/
+*.egg-info/
