@@ -2,6 +2,7 @@ from groq import Groq
 from sentence_transformers import SentenceTransformer
 from .config import settings
 from .retrievers import load_vector_store
+from sklearn.metrics.pairwise import cosine_similarity
 
 client = Groq(api_key=settings.GROQ_API_KEY)
 
@@ -10,7 +11,10 @@ embedder = SentenceTransformer(settings.EMBEDDING_MODEL)
 
 def ask_llm(question, context, model="llama-3.3-70b-versatile"):
     prompt = f"""
-You are a RAG assistant. Use ONLY the provided context.
+Answer ONLY using facts explicitly present in the context.
+If the answer is not found in the context, reply exactly:
+"Answer not found in the document."
+Do NOT infer, assume, or generalize.
 
 Question:
 {question}
@@ -51,14 +55,70 @@ def pipeline_c(question: str):
     answer = ask_llm(question, context, model="llama-3.3-70b-versatile")
     return {"pipeline": "C", "answer": answer, "docs": [d.page_content for d in docs]}
 
+def rerank_by_similarity(query, docs, embedder, top_k=3):
+    query_emb = embedder.encode(query)
+
+    scored = []
+    for doc in docs:
+        doc_emb = embedder.encode(doc.page_content)
+        score = cosine_similarity([query_emb], [doc_emb])[0][0]
+        scored.append((score, doc))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [doc for _, doc in scored[:top_k]]
 
 def pipeline_d(question: str):
     vs = load_vector_store("pipeline_d")
-    docs = vs.similarity_search(question, k=5)
-    reranked = sorted(docs, key=lambda x: len(x.page_content), reverse=True)[:3]
-    context = "\n".join([d.page_content for d in reranked])
+
+    # Step 1: Query decomposition (forces diverse retrieval)
+    subqueries = [
+        question,
+        "proposed system architecture",
+        "database design",
+        "modules and features",
+        "results and discussion"
+    ]
+
+    all_docs = []
+
+    # Step 2: Retrieve documents per subquery
+    for q in subqueries:
+        docs = vs.similarity_search(q, k=4)
+        all_docs.extend(docs)
+
+    # Remove duplicate chunks
+    unique_docs = {
+        doc.page_content: doc for doc in all_docs
+    }.values()
+
+    unique_docs = list(unique_docs)
+
+    if not unique_docs:
+        return {
+            "pipeline": "D",
+            "answer": "No relevant documents found.",
+            "docs": []
+        }
+
+    # Step 3: Semantic reranking (final relevance filter)
+    reranked_docs = rerank_by_similarity(
+        query=question,
+        docs=unique_docs,
+        embedder=embedder,
+        top_k=3
+    )
+
+    # Step 4: Build focused context
+    context = "\n\n".join(doc.page_content for doc in reranked_docs)
+
+    # Step 5: Generate grounded answer
     answer = ask_llm(question, context)
-    return {"pipeline": "D", "answer": answer, "docs": [d.page_content for d in reranked]}
+
+    return {
+        "pipeline": "D",
+        "answer": answer,
+        "docs": [doc.page_content for doc in reranked_docs]
+    }
 
 
 def run_all_pipelines(question: str):
@@ -110,7 +170,6 @@ No explanation.
 
     best = response.choices[0].message.content.strip()
 
-    # clean result just in case
     best = best.replace(".", "").upper()
 
     if best not in ["A", "B", "C", "D"]:
