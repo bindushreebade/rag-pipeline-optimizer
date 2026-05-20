@@ -44,10 +44,14 @@ frontend/.streamlit/
 # FAISS / Vectorstores
 # (We keep vectorstore folder but ignore heavy index files)
 # -------------------------------
+backend/app/data/vectorstores/study_documents/
 backend/app/data/vectorstores/*/*.index
 backend/app/data/vectorstores/*/*.idx
 backend/app/data/vectorstores/*/index.faiss
 backend/app/data/vectorstores/*/index.bin
+
+# User-uploaded study files
+backend/app/uploads/*
 
 # -------------------------------
 # Sentence-Transformers Cache

@@ -7,4 +7,10 @@ langchain-chroma
 pydantic
 pydantic-settings
 groq
-PyPDF2
+fastapi
+uvicorn
+scikit-learn
+pypdf
+python-multipart
+streamlit
+requests

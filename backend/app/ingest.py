@@ -1,68 +1,100 @@
-from dotenv import load_dotenv
 import os
 from pathlib import Path
+from typing import Iterable
 
 from langchain_chroma import Chroma
+from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import PyPDFLoader
-from sentence_transformers import SentenceTransformer
+from pypdf import PdfReader
 
-load_dotenv()
+try:
+    from sentence_transformers import SentenceTransformer
+except ImportError:  # pragma: no cover
+    SentenceTransformer = None
+
+from .config import settings
+from .retrievers import (
+    STUDY_COLLECTION,
+    VECTOR_DIR,
+    SentenceTransformerEmbeddings,
+    get_embedding_model,
+)
 
 BASE_DIR = Path(__file__).parent.resolve()
 UPLOAD_DIR = BASE_DIR / "uploads"
-VECTOR_DIR = BASE_DIR / "data" / "vectorstores"
+STUDY_VECTOR_DIR = VECTOR_DIR / STUDY_COLLECTION
 
-PIPELINES = ["pipeline_a", "pipeline_b", "pipeline_c", "pipeline_d"]
 
-# Embedding wrapper
-class SentenceTransformerEmbeddings:
-    def __init__(self, model):
-        self.model = model
-
-    def embed_documents(self, texts):
-        return self.model.encode(texts, convert_to_numpy=True).tolist()
-
-    def embed_query(self, text):
-        return self.model.encode([text], convert_to_numpy=True).tolist()[0]
-
-def ingest_document():
-    print("🔄 Starting ingestion...")
-
-    # Load PDFs
+def _load_pdf(path: Path) -> list[Document]:
+    reader = PdfReader(str(path))
     documents = []
-    for fname in os.listdir(UPLOAD_DIR):
-        if fname.lower().endswith(".pdf"):
-            loader = PyPDFLoader(str(UPLOAD_DIR / fname))
-            documents.extend(loader.load())
 
-    # Split into chunks
-    splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150)
+    for page_number, page in enumerate(reader.pages, start=1):
+        text = page.extract_text() or ""
+        if text.strip():
+            documents.append(
+                Document(
+                    page_content=text,
+                    metadata={"source": path.name, "page": page_number},
+                )
+            )
+
+    return documents
+
+
+def _load_documents(paths: Iterable[Path]) -> list[Document]:
+    documents = []
+    for path in paths:
+        if path.suffix.lower() == ".pdf":
+            documents.extend(_load_pdf(path))
+    return documents
+
+
+def ingest_files(paths: Iterable[Path]) -> dict:
+    """Add uploaded PDFs to the shared study vectorstore."""
+    paths = [Path(path) for path in paths]
+
+    if SentenceTransformer is None:
+        raise ImportError("sentence_transformers is required for document ingestion.")
+
+    documents = _load_documents(paths)
+    if not documents:
+        return {"files": [path.name for path in paths], "chunks": 0}
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=settings.CHUNK_SIZE,
+        chunk_overlap=settings.CHUNK_OVERLAP,
+        separators=["\n\n", "\n", ". ", " ", ""],
+    )
     chunks = splitter.split_documents(documents)
 
-    # Load embeddings
-    embedder = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
-    embedding_fn = SentenceTransformerEmbeddings(embedder)
+    embedding_fn = SentenceTransformerEmbeddings(get_embedding_model())
 
-    # Build vectorstores
-    for name in PIPELINES:
-        print(f"📦 Building {name}")
-        pipeline_path = VECTOR_DIR / name
-        pipeline_path.mkdir(parents=True, exist_ok=True)
+    STUDY_VECTOR_DIR.mkdir(parents=True, exist_ok=True)
+    vectorstore = Chroma(
+        collection_name=STUDY_COLLECTION,
+        persist_directory=str(STUDY_VECTOR_DIR),
+        embedding_function=embedding_fn,
+    )
+    vectorstore.add_documents(chunks)
 
-        vectorstore = Chroma(
-            collection_name=name,
-            persist_directory=str(pipeline_path),
-            embedding_function=embedding_fn,
-        )
+    return {"files": [path.name for path in paths], "chunks": len(chunks)}
 
-        texts = [c.page_content for c in chunks]
-        metadatas = [c.metadata for c in chunks]
 
-        vectorstore.add_texts(texts=texts, metadatas=metadatas)
-        print(f"✅ Saved at {pipeline_path}")
+def ingest_document():
+    print("Starting ingestion...")
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    pdfs = [
+        UPLOAD_DIR / fname
+        for fname in os.listdir(UPLOAD_DIR)
+        if fname.lower().endswith(".pdf")
+    ]
+    result = ingest_files(pdfs)
+    print(
+        f"Ingestion complete: {result['chunks']} chunks from "
+        f"{len(result['files'])} file(s)."
+    )
 
-    print("🎉 Ingestion complete!")
 
 if __name__ == "__main__":
     ingest_document()

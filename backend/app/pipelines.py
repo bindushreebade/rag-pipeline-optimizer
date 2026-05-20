@@ -1,7 +1,7 @@
 from groq import Groq
 from sentence_transformers import SentenceTransformer
 from .config import settings
-from .retrievers import load_vector_store
+from .retrievers import load_vector_store, load_study_vector_store
 from sklearn.metrics.pairwise import cosine_similarity
 
 client = Groq(api_key=settings.GROQ_API_KEY)
@@ -176,3 +176,32 @@ No explanation.
         best = "A"  # fallback
 
     return best
+
+
+def answer_from_study_documents(question: str):
+    """
+    Query the study_documents vectorstore and return an answer with sources.
+    """
+    vs = load_study_vector_store()
+    if vs is None:
+        return {"answer": "Study documents not found. Please upload documents first.", "sources": []}
+    
+    docs = vs.similarity_search(question, k=3)
+    context = "\n".join([d.page_content for d in docs])
+    answer = ask_llm(question, context)
+    
+    # Format sources for the frontend
+    sources = []
+    for i, doc in enumerate(docs, 1):
+        metadata = doc.metadata if hasattr(doc, 'metadata') else {}
+        sources.append({
+            "source": metadata.get("source", f"Document {i}"),
+            "page": metadata.get("page", ""),
+            "text": doc.page_content[:200] + "..." if len(doc.page_content) > 200 else doc.page_content
+        })
+    
+    return {
+        "answer": answer,
+        "sources": sources,
+        "model": "llama-3.3-70b-versatile"
+    }
