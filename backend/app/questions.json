@@ -1,0 +1,124 @@
+[
+        {
+          "id": "Q01",
+          "question": "What is the k-Canadian Traveller Problem (k-CTP), and what is the traveller trying to minimize?"
+        },
+        {
+          "id": "Q02",
+          "question": "When and how does the traveller discover that an edge is blocked?"
+        },
+        {
+          "id": "Q03",
+          "question": "How is the competitive ratio of an online strategy defined in the k-CTP?"
+        },
+        {
+          "id": "Q04",
+          "question": "What is the optimal offline cost, and what information does the offline traveller have that the online traveller does not?"
+        },
+        {
+          "id": "Q05",
+          "question": "What conditions must a road map satisfy to be considered feasible?"
+        },
+        {
+          "id": "Q06",
+          "question": "What does it mean for a graph to be unit-weighted?"
+        },
+        {
+          "id": "Q07",
+          "question": "How does the paper define a rectangular grid graph?"
+        },
+        {
+          "id": "Q08",
+          "question": "What distinguishes a solid grid graph from a rectangular grid graph?"
+        },
+        {
+          "id": "Q09",
+          "question": "What lower bound on the competitive ratio applies to deterministic k-CTP algorithms on general graphs?"
+        },
+        {
+          "id": "Q10",
+          "question": "What competitive ratio does the paper establish for deterministic algorithms on unit-weighted solid grids, and why is the result asymptotically tight?"
+        },
+        {
+          "id": "Q11",
+          "question": "According to Theorem 7, what lower bound does the paper establish for the Greedy strategy on unit-weighted square grids?"
+        },
+        {
+          "id": "Q12",
+          "question": "What construction does Theorem 8 use to establish an Omega(sqrt(k)) lower bound for deterministic strategies?"
+        },
+        {
+          "id": "Q13",
+          "question": "In the construction used in Theorem 8, how many blocked edges are present, and what is the shortest feasible path length?"
+        },
+        {
+          "id": "Q14",
+          "question": "Under what restriction on grid size does FollowWall achieve an O(sqrt(k)) competitive ratio in Theorem 15?"
+        },
+        {
+          "id": "Q15",
+          "question": "What does the paper establish about competitive ratios when arbitrary edge weights or non-solid unit-weighted grid structures are allowed?"
+        },
+        {
+          "id": "Q16",
+          "question": "How does the Greedy strategy choose its next path after discovering a blockage?"
+        },
+        {
+          "id": "Q17",
+          "question": "Why can the Greedy strategy perform poorly when successive blockages occur along its chosen route?"
+        },
+        {
+          "id": "Q18",
+          "question": "What are red vertices and blue vertices in the FollowWall strategy?"
+        },
+        {
+          "id": "Q19",
+          "question": "What is a red-blue component, and how is it used by FollowWall?"
+        },
+        {
+          "id": "Q20",
+          "question": "What are the main steps performed by the RB-DFS subroutine after a blockage is encountered?"
+        },
+        {
+          "id": "Q21",
+          "question": "How does FollowWall choose where to resume its journey toward the target after exploring a red-blue component?"
+        },
+        {
+          "id": "Q22",
+          "question": "How does Doubling-FollowWall expand its search region when FollowWall fails to find a feasible route?"
+        },
+        {
+          "id": "Q23",
+          "question": "Why are both the unit-weighting assumption and the solidity assumption essential to obtaining a sublinear-in-k competitive ratio?"
+        },
+        {
+          "id": "Q24",
+          "question": "Compare FollowWall and Doubling-FollowWall. What limitation of FollowWall does the latter address?"
+        },
+        {
+          "id": "Q25",
+          "question": "How does the paper use the relationship between the number of edges, the initial source-target distance, and the number of blockages to derive the O(sqrt(k)) bound for FollowWall?"
+        },
+        {
+          "id": "Q26",
+          "question": "Why does the red-blue routing property guarantee that FollowWall can make progress toward the target after exploring a blockage component?"
+        },
+        {
+          "id": "Q27",
+          "question": "How does the paper's lower-bound construction demonstrate that no deterministic strategy can achieve a competitive ratio of o(sqrt(k)) on unit-weighted square grids?"
+        },
+        {
+          "id": "Q28",
+          "question": "Explain how the paper's lower-bound results motivate the development of Doubling-FollowWall. Connect the limitations of Greedy, the Omega(sqrt(k)) lower bound, and the proposed strategy's guarantee."
+        },
+        {
+          "id": "Q29",
+          "question": "Trace the complete response of FollowWall when it encounters a blocked edge on its precomputed shortest path, from discovering the blockage to resuming the journey. Explain how the RB-DFS procedure supports this process."
+        },
+        {
+          "id": "Q30",
+          "question": "The paper states that the O(sqrt(k)) guarantee is asymptotically tight for unit-weighted solid grids. Explain what the upper-bound and lower-bound results jointly establish, and identify the assumptions under which that conclusion holds."
+        }
+
+      ]
+      

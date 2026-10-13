@@ -2,10 +2,10 @@ import mysql.connector
 from datetime import datetime
 from typing import List, Optional, Dict, Any
 from contextlib import contextmanager
-
+ 
 from .config import settings
-
-
+ 
+ 
 class ChatHistoryDB:
     """MySQL database handler for chat history storage and retrieval."""
     
@@ -203,7 +203,8 @@ class ChatHistoryDB:
         except mysql.connector.Error as err:
             print(f"✗ Error retrieving statistics: {err}")
             return {"total_chats": 0, "unique_days": 0}
-
-
+ 
+ 
 # Global instance
 db = ChatHistoryDB()
+ 

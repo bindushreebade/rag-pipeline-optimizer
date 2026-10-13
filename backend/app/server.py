@@ -1,23 +1,25 @@
 from pathlib import Path
 from typing import List, Optional
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from .ingest import UPLOAD_DIR, ingest_files
-from .pipelines import answer_from_study_documents, run_all_pipelines
 from .database import db
+from .ingest import UPLOAD_DIR, ingest_files
+from .metrics import calculate_all_pipeline_metrics
+from .pipelines import answer_from_study_documents, run_all_pipelines
 
 app = FastAPI(title="Study Research Q&A")
 
-# Initialize database on startup
+
 @app.on_event("startup")
 async def startup_event():
     try:
         db.init_db()
     except Exception as e:
         print(f"Warning: Could not initialize database: {e}")
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -89,18 +91,39 @@ def compare_pipelines(data: Question):
     return run_all_pipelines(data.question)
 
 
+@app.get("/metrics/retrieval")
+def retrieval_metrics(
+    retrieve_k: int = Query(30, ge=1, description="Candidate chunks retrieved before ranking"),
+    final_k: int = Query(5, description="Chunks kept for scoring: 1, 3, 5 or 10"),
+    split: str = Query("all", description="all, dev or test"),
+):
+    if final_k not in (1, 3, 5, 10):
+        raise HTTPException(status_code=422, detail="final_k must be 1, 3, 5 or 10.")
+    if split not in ("all", "dev", "test"):
+        raise HTTPException(status_code=422, detail="split must be all, dev or test.")
+    try:
+        return calculate_all_pipeline_metrics(
+            retrieve_k=retrieve_k,
+            final_k=final_k,
+            split=split,
+        )
+    except FileNotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error))
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Error calculating metrics: {error}")
+
+
 # ─── Chat History Endpoints ───────────────────────────────────────────
 
 @app.post("/history/save")
 async def save_chat_history(entry: ChatEntry):
-    """Save a chat interaction to MySQL history."""
     try:
         chat_id = db.save_chat(
             question=entry.question,
             answer=entry.answer,
             pipeline=entry.pipeline,
             document_name=entry.document_name,
-            retrieved_documents=entry.retrieved_documents
+            retrieved_documents=entry.retrieved_documents,
         )
         return {"id": chat_id, "message": "Chat saved successfully"}
     except Exception as e:
@@ -109,19 +132,18 @@ async def save_chat_history(entry: ChatEntry):
 
 @app.post("/history/save-comparison")
 async def save_pipeline_comparison(entry: PipelineComparisonEntry):
-    """Save multi-pipeline comparison results to history."""
     try:
         results = {
             "A": entry.pipeline_a_answer,
             "B": entry.pipeline_b_answer,
             "C": entry.pipeline_c_answer,
-            "D": entry.pipeline_d_answer
+            "D": entry.pipeline_d_answer,
         }
         comparison_id = db.save_pipeline_comparison(
             question=entry.question,
             results=results,
             best_pipeline=entry.best_pipeline,
-            document_name=entry.document_name
+            document_name=entry.document_name,
         )
         return {"id": comparison_id, "message": "Comparison saved successfully"}
     except Exception as e:
@@ -130,7 +152,6 @@ async def save_pipeline_comparison(entry: PipelineComparisonEntry):
 
 @app.get("/history")
 def get_chat_history(limit: int = 50, document_name: Optional[str] = None):
-    """Retrieve chat history with optional filtering."""
     try:
         history = db.get_chat_history(limit=limit, document_name=document_name)
         return {"count": len(history), "history": history}
@@ -140,7 +161,6 @@ def get_chat_history(limit: int = 50, document_name: Optional[str] = None):
 
 @app.get("/history/comparisons")
 def get_pipeline_comparisons(limit: int = 50, document_name: Optional[str] = None):
-    """Retrieve pipeline comparison history."""
     try:
         comparisons = db.get_pipeline_comparisons(limit=limit, document_name=document_name)
         return {"count": len(comparisons), "comparisons": comparisons}
@@ -150,22 +170,18 @@ def get_pipeline_comparisons(limit: int = 50, document_name: Optional[str] = Non
 
 @app.get("/history/stats")
 def get_history_statistics(document_name: Optional[str] = None):
-    """Get statistics about chat history."""
     try:
-        stats = db.get_statistics(document_name=document_name)
-        return stats
+        return db.get_statistics(document_name=document_name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving statistics: {str(e)}")
 
 
 @app.delete("/history/{chat_id}")
 def delete_chat_entry(chat_id: int):
-    """Delete a specific chat history entry."""
     try:
         success = db.delete_chat_history(chat_id)
-        if success:
-            return {"message": "Chat entry deleted successfully"}
-        else:
-            raise HTTPException(status_code=404, detail="Chat entry not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error deleting chat: {str(e)}")
+    if not success:
+        raise HTTPException(status_code=404, detail="Chat entry not found")
+    return {"message": "Chat entry deleted successfully"}

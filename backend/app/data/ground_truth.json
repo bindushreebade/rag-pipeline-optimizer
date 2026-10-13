@@ -1,0 +1,338 @@
+
+[
+  {
+    "id": "Q01",
+    "question": "What is the k-Canadian Traveller Problem, and what is the traveller trying to minimize?",
+    "reference_answer": "The k-CTP is an online graph-navigation problem in which a traveller moves from a source vertex to a target vertex despite up to k blocked edges, which are discovered when an endpoint is reached. The objective is to minimize the total distance travelled.",
+    "source_pages": [
+      2
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p1-2af00bad10e6",
+      "Sample_pdf-p2-94b5f1e78a1c"
+    ]
+  },
+  {
+    "id": "Q02",
+    "question": "When and how does the traveller discover that an edge is blocked?",
+    "reference_answer": "A blocked edge is revealed only when the traveller reaches one of its endpoints and attempts to use it.",
+    "source_pages": [
+      2
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p4-bc2457a19eb4"
+    ]
+  },
+  {
+    "id": "Q03",
+    "question": "How is the competitive ratio of an online strategy defined in the k-CTP?",
+    "reference_answer": "It is the distance travelled by the online strategy divided by the distance an offline traveller would have travelled knowing the blocked edges in advance.",
+    "source_pages": [
+      2
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p7-c90ec0579884"
+    ]
+  },
+  {
+    "id": "Q04",
+    "question": "What is the optimal offline cost, and what information does the offline traveller have that the online traveller does not?",
+    "reference_answer": "The optimal offline cost is the shortest feasible source-to-target path length when the set of blocked edges is known in advance.",
+    "source_pages": [
+      2
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p4-00465237fd1c"
+    ]
+  },
+  {
+    "id": "Q05",
+    "question": "What conditions must a road map satisfy to be considered feasible?",
+    "reference_answer": "A road map is feasible when at least one path from the source to the target remains after the blocked edges are removed.",
+    "source_pages": [
+      2
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p2-94b5f1e78a1c"
+    ]
+  },
+  {
+    "id": "Q06",
+    "question": "What does it mean for a graph to be unit-weighted?",
+    "reference_answer": "A graph is unit-weighted when every edge has weight one.",
+    "source_pages": [
+      5
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p5-e38fd842d2e9"
+    ]
+  },
+  {
+    "id": "Q07",
+    "question": "How does the paper define a rectangular grid graph?",
+    "reference_answer": "A rectangular grid graph is the graph induced by the vertices and edges of a rectangular portion of the square grid.",
+    "source_pages": [
+      5
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p5-63ed480843b5"
+    ]
+  },
+  {
+    "id": "Q08",
+    "question": "What distinguishes a solid grid graph from a rectangular grid graph?",
+    "reference_answer": "A solid grid graph is an induced square-grid subgraph whose bounded faces are all unit squares; a rectangular grid is the special rectangular case.",
+    "source_pages": [
+      5
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p5-beab45b34c3d"
+    ]
+  },
+  {
+    "id": "Q09",
+    "question": "What lower bound on the competitive ratio applies to deterministic k-CTP algorithms on general graphs?",
+    "reference_answer": "Every deterministic strategy has a competitive ratio of at least 2k+1 on some k-CTP instance.",
+    "source_pages": [
+      2
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p5-6c4e5b183333"
+    ]
+  },
+  {
+    "id": "Q10",
+    "question": "What competitive ratio does the paper establish for deterministic algorithms on unit-weighted solid grids, and why is the result asymptotically tight?",
+    "reference_answer": "The paper establishes an O(sqrt(k)) competitive ratio, and the matching Omega(sqrt(k)) lower bound makes the result asymptotically tight.",
+    "source_pages": [
+      17
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p17-f34b2da942a9"
+    ]
+  },
+  {
+    "id": "Q11",
+    "question": "According to Theorem 7, what lower bound does the paper establish for the Greedy strategy on unit-weighted square grids?",
+    "reference_answer": "Theorem 7 gives a lower bound showing that Greedy can have a competitive ratio that is linear in k on unit-weighted square grids.",
+    "source_pages": [
+      7
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p7-60a22227bce3"
+    ]
+  },
+  {
+    "id": "Q12",
+    "question": "What construction does Theorem 8 use to establish an Omega(sqrt(k)) lower bound for deterministic strategies?",
+    "reference_answer": "Theorem 8 uses a unit-weighted square-grid construction with strategically blocked edges that forces every deterministic strategy to make additional detours.",
+    "source_pages": [
+      8
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p8-bf456eedb239"
+    ]
+  },
+  {
+    "id": "Q13",
+    "question": "In the construction used in Theorem 8, how many blocked edges are present, and what is the shortest feasible path length?",
+    "reference_answer": "The construction uses a number of blocked edges proportional to the square of the grid parameter and has a shortest feasible path whose length is proportional to the grid dimension.",
+    "source_pages": [
+      8
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p8-bf456eedb239"
+    ]
+  },
+  {
+    "id": "Q14",
+    "question": "Under what restriction on grid size does FollowWall achieve an O(sqrt(k)) competitive ratio in Theorem 15?",
+    "reference_answer": "FollowWall achieves the bound when the grid has a size restriction relating its dimensions to the number of blockages, so the relevant grid scale is at most on the order of sqrt(k).",
+    "source_pages": [
+      15
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p15-b6450d673ead"
+    ]
+  },
+  {
+    "id": "Q15",
+    "question": "What does the paper establish about competitive ratios when arbitrary edge weights or non-solid unit-weighted grid structures are allowed?",
+    "reference_answer": "The paper shows that the favorable sublinear bound depends on unit edge weights and solidity; allowing arbitrary weights or non-solid structures can restore much larger lower bounds.",
+    "source_pages": [
+      17
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p17-72028741f958"
+    ]
+  },
+  {
+    "id": "Q16",
+    "question": "How does the Greedy strategy choose its next path after discovering a blockage?",
+    "reference_answer": "Greedy recomputes and follows a shortest path from its current position to the target using all blockages discovered so far.",
+    "source_pages": [
+      7
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p7-1ce8d421bd13"
+    ]
+  },
+  {
+    "id": "Q17",
+    "question": "Why can the Greedy strategy perform poorly when successive blockages occur along its chosen route?",
+    "reference_answer": "Successive blockages can repeatedly invalidate the current shortest route, forcing Greedy to retrace or take long detours before reaching the target.",
+    "source_pages": [
+      7
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p7-60a22227bce3"
+    ]
+  },
+  {
+    "id": "Q18",
+    "question": "What are red vertices and blue vertices in the FollowWall strategy?",
+    "reference_answer": "Red and blue vertices classify the vertices and boundary structure used by FollowWall to distinguish the sides of explored blockage components and guide routing around them.",
+    "source_pages": [
+      9
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p9-0de3e39f2cf0"
+    ]
+  },
+  {
+    "id": "Q19",
+    "question": "What is a red-blue component, and how is it used by FollowWall?",
+    "reference_answer": "A red-blue component is the connected explored region formed by the red and blue routing structure; FollowWall explores it to bypass a blockage and identify a route that progresses toward the target.",
+    "source_pages": [
+      10
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p10-4aa2382df5c4"
+    ]
+  },
+  {
+    "id": "Q20",
+    "question": "What are the main steps performed by the RB-DFS subroutine after a blockage is encountered?",
+    "reference_answer": "RB-DFS explores the relevant red-blue component, marks visited structure, follows available edges around the blockage, and returns the boundary information needed to continue toward the target.",
+    "source_pages": [
+      10
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p10-4aa2382df5c4"
+    ]
+  },
+  {
+    "id": "Q21",
+    "question": "How does FollowWall choose where to resume its journey toward the target after exploring a red-blue component?",
+    "reference_answer": "After exploration, FollowWall resumes from the reachable boundary vertex that gives a shortest feasible continuation toward the target.",
+    "source_pages": [
+      11
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p11-1a5134c55480"
+    ]
+  },
+  {
+    "id": "Q22",
+    "question": "How does Doubling-FollowWall expand its search region when FollowWall fails to find a feasible route?",
+    "reference_answer": "Doubling-FollowWall enlarges the explored grid region, typically by doubling the relevant search scale, and reruns the FollowWall procedure until a feasible route is found.",
+    "source_pages": [
+      16
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p16-7604c557f3f9"
+    ]
+  },
+  {
+    "id": "Q23",
+    "question": "Why are both the unit-weighting assumption and the solidity assumption essential to obtaining a sublinear-in-k competitive ratio?",
+    "reference_answer": "Unit weights control the cost of each exploration step, while solidity supplies the grid connectivity and boundary structure needed to route around blockages; removing either assumption permits costly detours.",
+    "source_pages": [
+      17
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p17-3a1459fd69a9"
+    ]
+  },
+  {
+    "id": "Q24",
+    "question": "Compare FollowWall and Doubling-FollowWall. What limitation of FollowWall does the latter address?",
+    "reference_answer": "FollowWall has a grid-size restriction. Doubling-FollowWall removes that limitation by progressively expanding the region on which FollowWall operates.",
+    "source_pages": [
+      16
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p16-7604c557f3f9"
+    ]
+  },
+  {
+    "id": "Q25",
+    "question": "How does the paper use the relationship between the number of edges, the initial source-target distance, and the number of blockages to derive the O(sqrt(k)) bound for FollowWall?",
+    "reference_answer": "The analysis bounds the explored edges using the source-target distance and blockage count, then balances the resulting terms by choosing a scale on the order of sqrt(k), yielding the O(sqrt(k)) ratio.",
+    "source_pages": [
+      14
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p14-fda8b81143f3"
+    ]
+  },
+  {
+    "id": "Q26",
+    "question": "Why does the red-blue routing property guarantee that FollowWall can make progress toward the target after exploring a blockage component?",
+    "reference_answer": "The red-blue routing property guarantees a reachable boundary route that crosses the explored component without revisiting the blocked edge, so the traveller can continue closer to the target.",
+    "source_pages": [
+      12
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p13-94b0d14bc184"
+    ]
+  },
+  {
+    "id": "Q27",
+    "question": "How does the paper's lower-bound construction demonstrate that no deterministic strategy can achieve a competitive ratio of o(sqrt(k)) on unit-weighted square grids?",
+    "reference_answer": "The adversarial construction places blockages so that every deterministic strategy is forced to explore enough extra grid edges to incur an Omega(sqrt(k)) ratio.",
+    "source_pages": [
+      8
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p8-bf456eedb239"
+    ]
+  },
+  {
+    "id": "Q28",
+    "question": "Explain how the paper's lower-bound results motivate the development of Doubling-FollowWall. Connect the limitations of Greedy, the Omega(sqrt(k)) lower bound, and the proposed strategy's guarantee.",
+    "reference_answer": "Greedy can suffer linear detours, while no deterministic strategy can beat the Omega(sqrt(k)) lower bound. Doubling-FollowWall is designed to match that lower-bound scale without requiring the restrictive grid-size condition of FollowWall.",
+    "source_pages": [
+      7,
+      8,
+      16
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p16-7604c557f3f9"
+    ]
+  },
+  {
+    "id": "Q29",
+    "question": "Trace the complete response of FollowWall when it encounters a blocked edge on its precomputed shortest path, from discovering the blockage to resuming the journey. Explain how the RB-DFS procedure supports this process.",
+    "reference_answer": "FollowWall detects the blocked edge, builds the associated red-blue component, explores it with RB-DFS, selects the reachable boundary continuation toward the target, and resumes along that route.",
+    "source_pages": [
+      10,
+      11
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p10-4aa2382df5c4",
+      "Sample_pdf-p11-1a5134c55480"
+    ]
+  },
+  {
+    "id": "Q30",
+    "question": "The paper states that the O(sqrt(k)) guarantee is asymptotically tight for unit-weighted solid grids. Explain what the upper-bound and lower-bound results jointly establish, and identify the assumptions under which that conclusion holds.",
+    "reference_answer": "The upper bound shows a deterministic strategy with O(sqrt(k)) competitive ratio, while the lower bound shows that every deterministic strategy can require Omega(sqrt(k)); together they establish Theta(sqrt(k)) under unit-weighted solid-grid assumptions.",
+    "source_pages": [
+      17
+    ],
+    "relevant_chunk_ids": [
+      "Sample_pdf-p17-f34b2da942a9"
+    ]
+  }
+]

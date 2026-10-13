@@ -137,32 +137,32 @@ When building document-based question-answering systems, practitioners face crit
 ┌─────────────────────────────────────────────────────────────┐
 │ PHASE 1: DOCUMENT INGESTION                                 │
 ├─────────────────────────────────────────────────────────────┤
-│  1. Upload PDF document                                      │
-│  2. Extract text with PyPDF2                                 │
-│  3. Clean and normalize content                              │
-│  4. Generate embeddings (Sentence-Transformers)              │
-│  5. Create 4 independent vectorstores (FAISS/Chroma)         │
+│  1. Upload PDF document                                     │
+│  2. Extract text with PyPDF2                                │
+│  3. Clean and normalize content                             │
+│  4. Generate embeddings (Sentence-Transformers)             │
+│  5. Create 4 independent vectorstores (FAISS/Chroma)        │
 └─────────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ PHASE 2: QUERY PROCESSING & RETRIEVAL                        │
+│ PHASE 2: QUERY PROCESSING & RETRIEVAL                       │
 ├─────────────────────────────────────────────────────────────┤
-│  Pipeline A: Chunk=900, k=3  ────→ [Retrieve 3 docs]       │
-│  Pipeline B: Chunk=900, k=5  ────→ [Retrieve 5 docs]       │
-│  Pipeline C: Chunk=512, k=5  ────→ [Retrieve 5 docs]       │
-│  Pipeline D: Chunk=1500, k=3 ────→ [Retrieve 3 docs]       │
-│                                                              │
-│  All retrievals happen in PARALLEL                           │
+│  Pipeline A: Chunk=900, k=3  ────→ [Retrieve 3 docs]        │
+│  Pipeline B: Chunk=900, k=5  ────→ [Retrieve 5 docs]        │
+│  Pipeline C: Chunk=512, k=5  ────→ [Retrieve 5 docs]        │
+│  Pipeline D: Chunk=1500, k=3 ────→ [Retrieve 3 docs]        │
+│                                                             │
+│  All retrievals happen in PARALLEL                          │
 └─────────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ PHASE 3: ANSWER GENERATION                                   │
+│ PHASE 3: ANSWER GENERATION                                  │
 ├─────────────────────────────────────────────────────────────┤
-│  Each pipeline passes retrieved context to Groq LLaMA:       │
-│                                                              │
+│  Each pipeline passes retrieved context to Groq LLaMA:      │
+│                                                             │
 │  PromptTemplate: "Answer ONLY using facts explicitly        │
 │  present in the context. No inference or hallucination."    │
-│                                                              │
+│                                                             │
 │  Pipeline A Answer ────→                                    │
 │  Pipeline B Answer ────→                                    │
 │  Pipeline C Answer ────→                                    │
@@ -172,45 +172,45 @@ When building document-based question-answering systems, practitioners face crit
 ┌─────────────────────────────────────────────────────────────┐
 │ PHASE 4: AUTOMATED EVALUATION (LLM-as-Judge)                │
 ├─────────────────────────────────────────────────────────────┤
-│  Judge Model (Groq LLaMA 3.3-70B) analyzes:                  │
-│  - All 4 answers                                             │
-│  - Original question                                         │
-│  - Retrieved documents                                       │
-│                                                              │
-│  Scoring Criteria:                                           │
-│  ★ Accuracy: Does answer match retrieved facts?             │
-│  ★ Completeness: Are all relevant points covered?           │
-│  ★ Clarity: Is the answer easy to understand?               │
-│  ★ Conciseness: No unnecessary verbosity?                   │
-│                                                              │
-│  OUTPUT: 🏆 Best Pipeline (A/B/C/D)                          │
+│  Judge Model (Groq LLaMA 3.3-70B) analyzes:                 │
+│  - All 4 answers                                            │
+│  - Original question                                        │
+│  - Retrieved documents                                      │
+│                                                             │
+│  Scoring Criteria:                                          │
+│  ★ Accuracy: Does answer match retrieved facts?             |
+│  ★ Completeness: Are all relevant points covered?           |
+│  ★ Clarity: Is the answer easy to understand?               |
+│  ★ Conciseness: No unnecessary verbosity?                   |
+│                                                              |
+│  OUTPUT: 🏆 Best Pipeline (A/B/C/D)                         |
 └─────────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ PHASE 5: PERSISTENCE & ANALYTICS                             │
+│ PHASE 5: PERSISTENCE & ANALYTICS                            |
 ├─────────────────────────────────────────────────────────────┤
-│  1. Store in MySQL:                                          │
-│     - All 4 pipeline answers                                 │
-│     - Best pipeline determination                            │
-│     - Retrieved documents                                    │
-│     - Timestamp & document metadata                          │
-│                                                              │
-│  2. Calculate Statistics:                                    │
-│     - Pipeline win rate (which is best most often?)          │
-│     - Answer quality trends                                  │
-│     - Retrieval effectiveness by chunk size                  │
-│     - Performance by document type                           │
+│  1. Store in MySQL:                                         │
+│     - All 4 pipeline answers                                │
+│     - Best pipeline determination                           │
+│     - Retrieved documents                                   │
+│     - Timestamp & document metadata                         │
+│                                                             │
+│  2. Calculate Statistics:                                   │
+│     - Pipeline win rate (which is best most often?)         │
+│     - Answer quality trends                                 │
+│     - Retrieval effectiveness by chunk size                 │
+│     - Performance by document type                          │
 └─────────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ PHASE 6: VISUALIZATION & INSIGHTS (Streamlit UI)             │
+│ PHASE 6: VISUALIZATION & INSIGHTS (Streamlit UI)            │
 ├─────────────────────────────────────────────────────────────┤
-│  - Side-by-side pipeline answer comparison                   │
-│  - Best pipeline highlighted with reasoning                  │
-│  - Expandable retrieved documents view                       │
-│  - Chat history with search/filter                           │
-│  - Win rate statistics by pipeline                           │
-│  - Performance trends over time                              │
+│  - Side-by-side pipeline answer comparison                  │
+│  - Best pipeline highlighted with reasoning                 │
+│  - Expandable retrieved documents view                      │
+│  - Chat history with search/filter                          │
+│  - Win rate statistics by pipeline                          │
+│  - Performance trends over time                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -253,7 +253,7 @@ When building document-based question-answering systems, practitioners face crit
 ### **Infrastructure & Tools**
 
 | Tool | Purpose |
-|------|---------|
+|------|---------|8
 | Python 3.10+ | Runtime environment |
 | Virtual Environment (venv) | Dependency isolation |
 | pip | Package management |
